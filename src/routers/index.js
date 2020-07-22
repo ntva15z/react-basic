@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Main from '../pages/layouts/Main'
-import MainAdmin from '../pages/layouts/MainAdmin'
+import LayoutMain from '../pages/layouts/LayoutMain'
+import LayoutAdmin from '../pages/layouts/LayoutAdmin'
 //Admin
 import Dashboard from '../pages/views/Admin/Dashboard'
 import ProductsManager from '../pages/views/Admin/Products'
@@ -19,7 +19,7 @@ const Routers = ({ products, onRemove }) => {
         <Router>
             <Switch>
                 <Route path="/admin/:path?" exact>
-                    <MainAdmin>
+                    <LayoutAdmin>
                         <Switch>
                             <Route path='/admin' exact>
                                 <Dashboard />
@@ -28,10 +28,10 @@ const Routers = ({ products, onRemove }) => {
                                 <ProductsManager products={products} onRemove={onHandleRemove} />
                             </Route>
                         </Switch>
-                    </MainAdmin>
+                    </LayoutAdmin>
                 </Route>
                 <Route>
-                    <Main>
+                    <LayoutMain>
                         <Switch>
                             <Route path="/" exact>
                                 <Home />
@@ -40,7 +40,7 @@ const Routers = ({ products, onRemove }) => {
                                 <About />
                             </Route>
                         </Switch>
-                    </Main>
+                    </LayoutMain>
                 </Route>
             </Switch>
         </Router>
