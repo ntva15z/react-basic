@@ -7,7 +7,7 @@ export default ({ children }) => {
     console.log('render Main')
 
     return (
-        <div>
+        <div className="user-page">
             <Header />
             <Navbar />
             <div className="content">
