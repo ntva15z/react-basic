@@ -1,24 +1,18 @@
-import React, { useState } from 'react';
-// import Products from './components/Products';
-// import Box from './components/Box/Box';
-// import Home from './components/Main/NavBar'
-// import Product from './components/Product';
+import React, { useState, useEffect, createContext, useReducer } from 'react';
+import axios from 'axios';
+
 import dataFake from './dataFake';
 import Routers from './routers'
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
-// import AddProduct from './components/AddProduct';
+import { GlobalProvider } from './context/GlobalState';
+
 function App() {
 
   const [products, setProducts] = useState(dataFake);
   const [status, setStatus] = useState(false);
   const [color, setColor] = useState('green');
+
+
   const onHandleClick = () => {
-    // setStatus(true);
     setColor('red');
   }
   const onHandleRemove = (id) => {
@@ -37,7 +31,9 @@ function App() {
   }
   return (
     <div className="App">
-      <Routers products={products} onRemove={onHandleRemove} />
+      <GlobalProvider>
+        <Routers products={products} onRemove={onHandleRemove} />
+      </GlobalProvider>
     </div>
   )
 
