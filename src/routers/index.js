@@ -9,23 +9,38 @@ import ProductsManager from '../pages/views/Admin/Products'
 //Views
 import About from '../pages/views/Main/About'
 import Home from '../pages/views/Main/Home'
+import EditProduct from '../pages/views/Admin/EditProductForm';
+import AddProduct from '../pages/views/Admin/AddProductForm';
 
 
-const Routers = ({ products, onRemove }) => {
+const Routers = ({ products, onRemove, onAdd, onUpdate }) => {
     const onHandleRemove = (id) => {
         onRemove(id)
+    }
+    const onHandleUpdate = (id, product) => {
+        onUpdate(id, product)
     }
     return (
         <Router>
             <Switch>
-                <Route path="/admin/:path?" exact>
+                <Route path="/admin/:path?/:path?" exact>
                     <LayoutAdmin>
                         <Switch>
                             <Route path='/admin' exact>
                                 <Dashboard />
                             </Route>
-                            <Route path='/admin/products'>
-                                <ProductsManager products={products} onRemove={onHandleRemove} />
+                            <Route path='/admin/products' render={(props) =>
+                                <ProductsManager {...props} products={products} onRemove={onHandleRemove} />
+                            }>
+                            </Route>
+                            <Route path='/admin/product/add'
+                                render={(props) =>
+                                    <AddProduct {...props} onAdd={onAdd} />}></Route>
+                            <Route path='/admin/product/:id'
+                                render={(props) =>
+                                    <EditProduct {...props} products={products} onUpdate={onHandleUpdate} />
+                                }
+                            >
                             </Route>
                         </Switch>
                     </LayoutAdmin>

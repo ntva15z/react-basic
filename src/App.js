@@ -1,31 +1,25 @@
-import React, { useState } from 'react';
-// import Products from './components/Products';
-// import Box from './components/Box/Box';
-// import Home from './components/Main/NavBar'
-// import Product from './components/Product';
+import React, { useState, useEffect } from 'react';
 import dataFake from './dataFake';
 import Routers from './routers'
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
-// import AddProduct from './components/AddProduct';
 function App() {
 
-  const [products, setProducts] = useState(dataFake);
-  const [status, setStatus] = useState(false);
-  const [color, setColor] = useState('green');
-  const onHandleClick = () => {
-    // setStatus(true);
-    setColor('red');
-  }
+  const [products, setProducts] = useState([]);
+
+  // Hiển thị product từ localStorage
+  useEffect(() => {
+    const dataReal = localStorage.getItem('products');
+    const data = JSON.parse(dataReal);
+    setProducts(data);
+  }, []);
+
+
+  // Xóa sản phẩm
   const onHandleRemove = (id) => {
     const newProducts = products.filter(product => product.id !== id);
     setProducts(newProducts);
   }
-  const onHanleAdd = (product) => {
+  // Thêm sản phẩm
+  const onHandleAdd = (product) => {
     const newProduct = {
       id: products.length + 1,
       ...product
@@ -34,10 +28,23 @@ function App() {
       ...products,
       newProduct
     ])
+    localStorage.setItem('products', JSON.stringify(products))
   }
+
+
+  // Cập nhật product 
+  const onHandleUpdate = (updateProduct) => {
+    const newProducts = products.map(product => (
+      product.id === updateProduct.id ? updateProduct : product  // Nếu product.id bằng với id của sản phẩm vừa chỉnh sửa thì trả về mảng có object mới
+    ));
+    localStorage.setItem('products', JSON.stringify(newProducts))
+    setProducts(newProducts);
+  }
+
+
   return (
     <div className="App">
-      <Routers products={products} onRemove={onHandleRemove} />
+      <Routers products={products} onRemove={onHandleRemove} onAdd={onHandleAdd} onUpdate={onHandleUpdate} />
     </div>
   )
 
