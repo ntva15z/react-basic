@@ -4,11 +4,13 @@ import LayoutMain from '../pages/layouts/LayoutMain'
 import LayoutAdmin from '../pages/layouts/LayoutAdmin'
 //Admin
 import Dashboard from '../pages/views/Admin/Dashboard'
-import ProductsManager from '../pages/views/Admin/Products'
+import ProductsManager from '../pages/views/Admin/Products';
+
 
 //Views
 import About from '../pages/views/Main/About'
 import Home from '../pages/views/Main/Home'
+import AddProduct from '../pages/views/Admin/AddProduct';
 
 
 const Routers = ({ products, onRemove }) => {
@@ -18,7 +20,7 @@ const Routers = ({ products, onRemove }) => {
     return (
         <Router>
             <Switch>
-                <Route path="/admin/:path?" exact>
+                <Route path="/admin/:path?/:path?" exact>
                     <LayoutAdmin>
                         <Switch>
                             <Route path='/admin' exact>
@@ -26,6 +28,9 @@ const Routers = ({ products, onRemove }) => {
                             </Route>
                             <Route path='/admin/products'>
                                 <ProductsManager products={products} onRemove={onHandleRemove} />
+                            </Route>
+                            <Route path='/admin/product/add'>
+                                <AddProduct />
                             </Route>
                         </Switch>
                     </LayoutAdmin>

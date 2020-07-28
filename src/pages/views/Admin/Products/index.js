@@ -32,7 +32,7 @@ const ProductsManager = ({ products, onRemove }) => {
                             <tbody>
                                 {products.map(({ id, name, image, price }, index) => (
                                     <tr key={index}>
-                                        <th scope="row">{id}</th>
+                                        <th scope="row">{id * 2}</th>
                                         <td>{name}</td>
                                         <td><img src={image} alt="" width="50" /></td>
                                         <td>{price}</td>
