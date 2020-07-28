@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import dataFake from './dataFake';
-import Routers from './routers'
+import Routers from './routers';
+import apiRequest from './api/productApi';
 function App() {
 
   const [products, setProducts] = useState([]);
 
   // Hiển thị product từ localStorage
   useEffect(() => {
-    const dataReal = localStorage.getItem('products');
-    const data = JSON.parse(dataReal);
-    setProducts(data);
+    const getProducts = async () => {
+      try {
+        const {data} = await apiRequest.getAll();
+        setProducts(data);
+      } catch (error) {
+        
+      }
+    }
+    getProducts()
   }, []);
 
 
