@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 
+
 const AddProduct = ({ onAdd }) => {
     const { register, handleSubmit, errors } = useForm(); // Sử dụng hook form
+    let history = useHistory();
 
     // const [valueInput, setValueInput] = useState({});
-    let history = useHistory();
 
     // const onHandleChange = (e) => {
     //     const { name, value } = e.target;
@@ -16,12 +17,14 @@ const AddProduct = ({ onAdd }) => {
     //         [name]: value
     //     })
     // }
+
     const onHandleSubmit = (data) => {
-        // console.log(data)
-        // setValueInput(data);
-        onAdd(data);
+        const newData = {
+            id: Math.random().toString(36).substr(2, 9),
+            ...data
+        }
+        onAdd(newData);
         history.push('/admin/products');
-        // console.log(data)
     }
 
     return (
@@ -34,17 +37,19 @@ const AddProduct = ({ onAdd }) => {
                         name="name"
                         className="form-control"
                         id="productName"
-                        ref={register({ required: true })}
+                        ref={register({ required: true, minLength: 1 })}
                         aria-describedby="nameHelp"
                     />
-                    <small id="nameHelp" className="form-text text-danger">{errors.image && <span>This field is required</span>}</small>
+                    <small id="nameHelp" className="form-text text-danger">
+                        {errors.name && errors.name.type === "required" && <span>This field is required</span>}
+                        {errors.name && errors.name.type === "minLength" && <span>Min Length 10</span>}
+                    </small>
                 </div>
                 <div className="form-group">
                     <label htmlFor="productPrice">Ảnh sản phẩm</label>
                     <div className="input-group">
                         <div className="custom-file">
                             <input type="file" className="custom-file-input" id="inputGroupFile02" name="image"
-                                ref={register({ required: true })}
                             />
                             <label className="custom-file-label" htmlFor="inputGroupFile02" aria-describedby="imageHelp">Choose image</label>
                         </div>
@@ -61,7 +66,7 @@ const AddProduct = ({ onAdd }) => {
                         ref={register({ required: true })}
                         aria-describedby="priceHelp"
                     />
-                    <small id="priceHelp" className="form-text text-danger">{errors.image && <span>This field is required</span>}</small>
+                    <small id="priceHelp" className="form-text text-danger">{errors.price && <span>This field is required</span>}</small>
                 </div>
                 <button type="submit" className="btn btn-primary">Thêm sản phẩm</button>
             </form>

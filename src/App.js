@@ -1,41 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import dataFake from './dataFake';
 import Routers from './routers';
 import apiRequest from './api/productApi';
 function App() {
 
   const [products, setProducts] = useState([]);
 
-  // Hiển thị product từ localStorage
+  // Danh sách sản phẩm
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const {data} = await apiRequest.getAll();
+        const { data } = await apiRequest.getAll();
         setProducts(data);
       } catch (error) {
-        
+        console.log('failed to request API: ', error)
       }
     }
-    getProducts()
+    getProducts();
   }, []);
 
 
   // Xóa sản phẩm
-  const onHandleRemove = (id) => {
-    const newProducts = products.filter(product => product.id !== id);
-    setProducts(newProducts);
+  const onHandleRemove = async (id) => {
+    try {
+      const { data } = await apiRequest.remove(id);
+      const newProducts = products.filter(product => product.id !== data.id);
+      setProducts(newProducts);
+    } catch (error) {
+      console.log('failed to request API: ', error)
+    }
+
   }
   // Thêm sản phẩm
-  const onHandleAdd = (product) => {
-    const newProduct = {
-      id: products.length + 1,
-      ...product
+  const onHandleAdd = async (product) => {
+    try {
+      const { data } = await apiRequest.create(product);
+      setProducts([
+        ...products,
+        data
+      ])
+    } catch (error) {
+      console.log('failed to request API: ', error)
     }
-    setProducts([
-      ...products,
-      newProduct
-    ])
-    localStorage.setItem('products', JSON.stringify(products))
   }
 
 
