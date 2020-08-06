@@ -1,35 +1,46 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { useForm } from "react-hook-form";
+import { Editor } from '@tinymce/tinymce-react';
+import firebase from './../../../../firebase'
+
 
 
 const AddProduct = ({ onAdd }) => {
-    const { register, handleSubmit, errors } = useForm(); // Sử dụng hook form
+    const { register, handleSubmit, errors } = useForm();
     let history = useHistory();
 
-    // const [valueInput, setValueInput] = useState({});
-
-    // const onHandleChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setValueInput({
-    //         ...valueInput,
-    //         [name]: value
-    //     })
-    // }
+    const [desc, setDesc] = useState("");
 
     const onHandleSubmit = (data) => {
-        const newData = {
-            id: Math.random().toString(36).substr(2, 9),
-            ...data
-        }
-        onAdd(newData);
-        history.push('/admin/products');
-    }
+        let file = data.image[0];
+        // tạo folder chứa ảnh trên firesbase
+        let storageRef = firebase.storage().ref(`images/${file.name}`);
+        // đẩy ảnh lên đường dẫn trên
+        let uploadTask = storageRef.put(file);
+        // thực hiện việc đầy ảnh lên firebase
+        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED);
 
+        // lấy ảnh từ Firebase
+        firebase.storage().ref().child(`images/${file.name}`).getDownloadURL().then((url) => {
+            // Tạo object mới chứa toàn bộ thông tin từ input
+            const newData = {
+                id: Math.random().toString(36).substr(2, 9),
+                ...data,
+                desc,
+                image: url
+            }
+            // đẩy dữ liệu ra ngoài app.js thông qua props onAdd
+            onAdd(newData)
+        })
+    }
+    const handleEditorChange = (content, editor) => {
+        setDesc(content);
+    }
     return (
         <div>
-            <form action="" className="w-50" onSubmit={handleSubmit(onHandleSubmit)}>
+            <form className="w-50" onSubmit={handleSubmit(onHandleSubmit)}>
                 <div className="form-group">
                     <label htmlFor="productName">Tên sản phẩm</label>
                     <input
@@ -37,24 +48,25 @@ const AddProduct = ({ onAdd }) => {
                         name="name"
                         className="form-control"
                         id="productName"
-                        ref={register({ required: true, minLength: 1 })}
                         aria-describedby="nameHelp"
+                        ref={register}
                     />
-                    <small id="nameHelp" className="form-text text-danger">
-                        {errors.name && errors.name.type === "required" && <span>This field is required</span>}
-                        {errors.name && errors.name.type === "minLength" && <span>Min Length 10</span>}
-                    </small>
+                    {errors.name && errors.name.type === "required" && <span>Không để trống</span>}
+                    {errors.name && errors.name.type === "minLength" && <span>Bạn phải nhập ít nhất 5 ký tự</span>}
                 </div>
                 <div className="form-group">
                     <label htmlFor="productPrice">Ảnh sản phẩm</label>
                     <div className="input-group">
                         <div className="custom-file">
-                            <input type="file" className="custom-file-input" id="inputGroupFile02" name="image"
+                            <input type="file"
+                                className="custom-file-input"
+                                id="inputGroupFile02"
+                                name="image"
+                                ref={register}
                             />
                             <label className="custom-file-label" htmlFor="inputGroupFile02" aria-describedby="imageHelp">Choose image</label>
                         </div>
                     </div>
-                    <small id="imageHelp" className="form-text text-danger">{errors.image && <span>This field is required</span>}</small>
                 </div>
                 <div className="form-group">
                     <label htmlFor="productPrice">Giá sản phẩm</label>
@@ -63,14 +75,33 @@ const AddProduct = ({ onAdd }) => {
                         name="price"
                         className="form-control"
                         id="productPrice"
-                        ref={register({ required: true })}
                         aria-describedby="priceHelp"
+                        ref={register}
                     />
-                    <small id="priceHelp" className="form-text text-danger">{errors.price && <span>This field is required</span>}</small>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="productDescription">Mô tả chi tiết sản phẩm</label>
+                    <Editor
+                        init={{
+                            height: 500,
+                            images_upload_url: 'postAcceptor.php',
+                            plugins: [
+                                'advlist autolink lists link image charmap print preview anchor',
+                                'searchreplace visualblocks code fullscreen',
+                                'insertdatetime media table paste code help wordcount'
+                            ],
+                            toolbar:
+                                'undo redo | formatselect | bold italic backcolor |  image link\
+                                alignleft aligncenter alignright alignjustify | \
+                                bullist numlist outdent indent | removeformat | help',
+
+                        }}
+                        onEditorChange={handleEditorChange}
+                    />
                 </div>
                 <button type="submit" className="btn btn-primary">Thêm sản phẩm</button>
             </form>
-        </div>
+        </div >
     )
 }
 
