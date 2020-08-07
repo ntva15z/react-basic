@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { Editor } from '@tinymce/tinymce-react';
-import firebase from './../../../../firebase'
+import firebase from '../../../../firebase'
 
 
 
@@ -14,26 +14,26 @@ const AddProduct = ({ onAdd }) => {
     const [desc, setDesc] = useState("");
 
     const onHandleSubmit = (data) => {
+        console.log(data.image[0]);
         let file = data.image[0];
-        // tạo folder chứa ảnh trên firesbase
+        // tạo reference chứa ảnh trên firesbase
         let storageRef = firebase.storage().ref(`images/${file.name}`);
         // đẩy ảnh lên đường dẫn trên
-        let uploadTask = storageRef.put(file);
-        // thực hiện việc đầy ảnh lên firebase
-        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED);
-
-        // lấy ảnh từ Firebase
-        firebase.storage().ref().child(`images/${file.name}`).getDownloadURL().then((url) => {
-            // Tạo object mới chứa toàn bộ thông tin từ input
-            const newData = {
-                id: Math.random().toString(36).substr(2, 9),
-                ...data,
-                desc,
-                image: url
-            }
-            // đẩy dữ liệu ra ngoài app.js thông qua props onAdd
-            onAdd(newData)
-        })
+        storageRef.put(file).then(function () {
+            storageRef.getDownloadURL().then((url) => {
+                console.log(url);
+                // Tạo object mới chứa toàn bộ thông tin từ input
+                const newData = {
+                    id: Math.random().toString(36).substr(2, 9),
+                    ...data,
+                    desc,
+                    image: url
+                }
+                console.log(newData);
+                // đẩy dữ liệu ra ngoài app.js thông qua props onAdd
+                onAdd(newData)
+            })
+        });
     }
     const handleEditorChange = (content, editor) => {
         setDesc(content);

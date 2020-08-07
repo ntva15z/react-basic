@@ -9,8 +9,8 @@ import ProductsManager from '../pages/views/Admin/Products'
 //Views
 import About from '../pages/views/Main/About'
 import Home from '../pages/views/Main/Home'
-import EditProduct from '../pages/views/Admin/EditProductForm';
-import AddProduct from '../pages/views/Admin/AddProductForm';
+import EditProduct from '../pages/views/Admin/EditProduct';
+import AddProduct from '../pages/views/Admin/AddProduct';
 
 
 const Routers = ({ products, onRemove, onAdd, onUpdate }) => {
